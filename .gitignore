@@ -1,0 +1,5 @@
+*.swp
+*.swo
+*.swa
+word2vec*
+word2vec*/*.go
