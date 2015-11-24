@@ -1,5 +1,5 @@
 //package unigram_table_test //do a blackbox test?
-package word_vectors
+package wordvec
 
 import (
 	//"github.com/jbowles/word_vectors"

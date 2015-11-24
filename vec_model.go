@@ -1,4 +1,4 @@
-package word_vectors
+package wordvec
 
 import (
 	"errors"
@@ -150,7 +150,8 @@ type VectorModel struct {
 
 // PrecomputeExpTable builds the computes an exponent table using EXP_TABLE_SIZE and MAX_EXP
 func PreComputeExpTable() (expTable []float64) {
-	expTable = make([]float64, EXP_TABLE_SIZE+1)
+	//expTable = make([]float64, int(EXP_TABLE_SIZE+1))
+	expTable = make([]float64, 2)
 
 	for i := 0; i < int(EXP_TABLE_SIZE); i++ {
 		expTable[i] = math.Exp((float64(i) / EXP_TABLE_SIZE * (2 - 1)) * MAX_EXP) // Precompute the exp() table

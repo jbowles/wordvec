@@ -1,5 +1,5 @@
 //package word_vec_model_test
-package word_vectors
+package wordvec
 
 import (
 	//"github.com/jbowles/word_vectors"

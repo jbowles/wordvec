@@ -1,4 +1,4 @@
-package word_vectors
+package wordvec
 
 import (
 	"bufio"
