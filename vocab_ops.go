@@ -7,23 +7,24 @@ import (
 
 /*
 TODO these functions are related to using vocabulary files.
-
 func SaveVocab()               {}
 func ReadVocab()               {}
 */
 
+// ResetVocabHashIndices resets all indices of the vocab hash to -1. This is done for querying later on so we can distinguish indexes with zero, that have not been touched since initializatio, from indexes that have been modified. See also RecomputeVocabHash, LearnVocabFromTrainFile().
+func (v *VectorModel) ResetVocabHashIndices() {
+	for i := 0; i < v.VocabHashSize; i++ {
+		v.VocabHash[i] = -1
+	}
+}
+
+// RecomputeVocabHash modifies the value of the hash by updating it for every hash index that is not -1; i.e., vocab indexes that have been previously modified. See also RecomputeVocabHash, LearnVocabFromTrainFile().
 func (v *VectorModel) RecomputeVocabHash(hash uint) uint {
 	log.Println("re-compute vocab hash")
 	for v.VocabHash[hash] != -1 {
 		hash = (hash + 1) % uint(v.VocabHashSize)
 	}
 	return hash
-}
-func (v *VectorModel) ResetVocabHash() {
-	for i := 0; i < v.VocabHashSize; i++ {
-		// setup the indexes for querying
-		v.VocabHash[i] = -1
-	}
 }
 
 // SearchVocab returns the position of a single word in the vocabulary. If word is not found return -1.
@@ -39,10 +40,10 @@ func (v *VectorModel) SearchVocab(word string) int {
 		}
 		hash = (hash + 1) % uint(v.VocabHashSize)
 	}
-	//return -1
+	return -1
 }
 
-// AddWordToVocab adds a word to the vocabulary. Iterating over the vocabulary and looking for indices that are not -1 is possible becuase SortVocab() and ReduceVocab() set all indexes to -1; only vocab items with word will be be selected.
+// AddWordToVocab adds a word to the vocabulary. Iterating over the vocabulary and looking for indices that are not -1 is possible becuase SortVocab() and ReduceVocab() set all indexes to -1; only vocab items with word will be be selected. See also RecomputeVocabHash, LearnVocabFromTrainFile().
 func (v *VectorModel) AddWordToVocab(word string) int {
 	var length int = len(word) + 1
 	if length > v.MaxStringLen {
@@ -61,23 +62,14 @@ func (v *VectorModel) AddWordToVocab(word string) int {
 	}
 
 	hash := v.RecomputeVocabHash(v.GetWordHash(word))
-	/*
-		hash := v.GetWordHash(word)
-		for v.VocabHash[hash] != -1 {
-			//log.Printf("vocab hash: %v\n", hash)
-			hash = (hash + 1) % uint(v.VocabHashSize)
-			//log.Printf("vocab hash: %v\n", v.VocabHash)
-		}
-	*/
 
 	v.VocabHash[hash] = v.VocabSize - 1
-	//log.Printf("vocab hash index: %v\n\n", v.VocabHash[hash])
 	return v.VocabSize - 1
 }
 
-// ReduceVocab reduces the vocabulary by removing infrequent terms
+// ReduceVocab reduces the vocabulary by removing infrequent terms. See also ResetVocabHashIndices(), RecomputeVocabHash, LearnVocabFromTrainFile().
 func (v *VectorModel) ReduceVocab() {
-	log.Println("Reduce Vocabulary")
+	log.Println("Reducing Vocabulary")
 	var b int = 0
 	var hash uint
 	for a := 0; a < v.VocabSize; a++ {
@@ -90,44 +82,29 @@ func (v *VectorModel) ReduceVocab() {
 		}
 	}
 	v.VocabSize = b
-	v.ResetVocabHash()
-	/*
-		for c := 0; c < v.VocabHashSize; c++ {
-			// setup the indexes for querying
-			v.VocabHash[c] = -1
-		}
-	*/
+	v.ResetVocabHashIndices()
+
 	for c := 0; c < v.VocabHashSize; c++ {
 		//Hash will be re-computed; it is not actual
 		hash = v.RecomputeVocabHash(v.GetWordHash(v.Vocab[c].Word))
-		/*
-			hash = v.GetWordHash(v.Vocab[d].Word)
-			for v.VocabHash[hash] != -1 {
-				hash = (hash + 1) % uint(v.VocabHashSize)
-			}
-		*/
 		v.VocabHash[hash] = c
 	}
 	v.MinReduce++
 }
 
-// SortVocab sorts the vocabulary by frequency using word counts
+// SortVocab sorts the vocabulary by frequency using word counts. See also ResetVocabHashIndices(), RecomputeVocabHash, LearnVocabFromTrainFile().
 func (v *VectorModel) SortVocab() {
 	log.Println("Sorting Vocabulary")
 	var hash uint
-	var trainWords int64
+	//var trainWords int64
 
 	// Sort the vocabulary and keep </s> at the first position
 	sort.Sort(v.Vocab[1:])
 	// set up hash index for later querying
-	v.ResetVocabHash()
-	/*
-		for a := 0; a < v.VocabHashSize; a++ {
-			v.VocabHash[a] = -1
-		}
-	*/
-	size := v.VocabSize
+	v.ResetVocabHashIndices()
 
+	size := v.VocabSize
+	v.TrainWords = 0
 	for b := 0; b < size; b++ {
 		// Words occuring less than VectorModel.MinCount times will be discarded from the vocab
 		if (v.Vocab[b].Count < v.MinCount) && (b != 0) {
@@ -136,14 +113,9 @@ func (v *VectorModel) SortVocab() {
 		} else {
 			// Hash will be re-computed, after the sorting it is not actual
 			hash = v.RecomputeVocabHash(v.GetWordHash(v.Vocab[b].Word))
-			/*
-				hash = v.GetWordHash(v.Vocab[b].Word)
-				for v.VocabHash[hash] != -1 {
-					hash = (hash + 1) % uint(v.VocabHashSize)
-				}
-			*/
 			v.VocabHash[hash] = b
-			trainWords += int64(v.Vocab[b].Count)
+			//trainWords += int64(v.Vocab[b].Count)
+			v.TrainWords += int64(v.Vocab[b].Count)
 		}
 	}
 	v.Vocab = v.Vocab[:v.VocabSize+1]
