@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-// Reads a single word from a file, assuming space || tab || EOL to be word boundaries
+// ReadWord reads a single word from a file, assuming space OR tab OR EOL to be word boundaries
 func (v *VectorModel) ReadWord(r *bufio.Reader) (word string, err error) {
 	var scn int = 0
 	var char byte
@@ -51,9 +51,19 @@ func (v *VectorModel) ReadWord(r *bufio.Reader) (word string, err error) {
 	return
 }
 
-// Returns hash value of a word
+// ReadWordIndex Reads a word and returns its index in the vocabulary
+func (v *VectorModel) ReadWordIndex(buf *bufio.Reader) (int, error) {
+	//var word string
+	word, err := v.ReadWord(buf)
+	if err == io.EOF {
+		return -1, err
+	}
+	return v.SearchVocab(word), nil
+}
+
+// GetWordHash returns unisgned int hash value of a word
 func (v *VectorModel) GetWordHash(word string) uint {
-	var hash uint = 1
+	var hash uint = 0
 	for a := 0; a < len(word); a++ {
 		hash = hash*257 + uint(word[a])
 	}

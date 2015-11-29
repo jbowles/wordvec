@@ -25,14 +25,17 @@ var wordhashtests = []struct {
 	s    string
 	hash uint
 }{
-	{"cars", 19391274},
-	{"bicycle", 26888540},
-	{"bicycles", 20803279},
-	{"dixon", 2219939},
-	{"mountain", 11380076},
-	{"considering", 20680214},
-	{"martüa", 18960533},
-	{"martua", 23283211},
+	{"cars", 6920873},
+	{"bicycle", 15366747},
+	{"bicycles", 19254094},
+	{"dixon", 7326882},
+	{"mountain", 9830891},
+	{"considering", 20601749},
+	{"martüa", 7438740},
+	{"martua", 15767562},
+	{"", 0},
+	{" ", 32},
+	{"8437289hfnkdj0owri3925yrheijfi9yr8932yhfbucndhfjioeqw", 3210550},
 }
 
 func TestGetWordHash(t *testing.T) {
@@ -49,22 +52,24 @@ func TestGetWordHash(t *testing.T) {
 	}
 }
 
+// expect the index to be -1 because it is not part of a vocabulary
 var readwordtests = []struct {
-	expected string
+	expectedWord  string
+	expectedIndex int
 }{
-	{"line1word1"},
-	{"line1word2"},
-	{"line1word3"},
-	{"</s>"},
-	{"line2word1"},
-	{"</s>"},
-	{"</s>"},
-	{"line4word1"},
-	{"</s>"},
-	{"jdkfhdskfhdhsfjdsfdhsuafrioeujidjsiojiofhueihsbdkljfadsiofvujdhksifoewuiihdijfwb--line5truncateword1"},
-	{"</s>"},
-	{"line6word1"},
-	{"line6word2"},
+	{"line1word1", -1},
+	{"line1word2", -1},
+	{"line1word3", -1},
+	{"</s>", -1},
+	{"line2word1", -1},
+	{"</s>", -1},
+	{"</s>", -1},
+	{"line4word1", -1},
+	{"</s>", -1},
+	{"jdkfhdskfhdhsfjdsfdhsuafrioeujidjsiojiofhueihsbdkljfadsiofvujdhksifoewuiihdijfwb--line5truncateword1", -1},
+	{"</s>", -1},
+	{"line6word1", -1},
+	{"line6word2", -1},
 }
 
 func TestReadWord(t *testing.T) {
@@ -80,8 +85,29 @@ func TestReadWord(t *testing.T) {
 	)
 	for _, w := range readwordtests {
 		wrd, _ := mv.ReadWord(reader)
-		if wrd != w.expected {
-			t.Errorf("ReadWord(reader) = %s, expected %s", wrd, w.expected)
+		if wrd != w.expectedWord {
+			t.Errorf("ReadWord(reader) = %s, expected %s", wrd, w.expectedWord)
 		}
 	}
 }
+
+/*
+func TestReadWrdIndex(t *testing.T) {
+	var reader *bufio.Reader
+	f, ferr := os.Open(testFileForReadWord)
+	if ferr != nil {
+		t.Error(ferr)
+	}
+	reader = bufio.NewReader(f)
+	mv, _ := NewWord2VecModel(
+		"training_data.txt",
+		"word2vec_output.txt",
+	)
+	for _, w := range readwordtests {
+		idx, _ := mv.ReadWordIndex(reader)
+		if idx != w.expectedIndex {
+			t.Errorf("ReadWord(reader) = %d, expected %d", idx, w.expectedIndex)
+		}
+	}
+}
+*/

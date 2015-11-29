@@ -135,6 +135,7 @@ func TestNewWord2VecOptionsMany(t *testing.T) {
 	var WriteOutVocabFile ModelParams = OutVocabFileOption("word2vec_output_vocab_file.dat")
 	var SampleOverrideOption ModelParams = SampleOption(1e-5)
 	var WindowSkipTen ModelParams = WindowSkipLenOption(10)
+	var MaxVocabHashSize ModelParams = VocabHashSizeOption(300)
 	m, _ := NewWord2VecModel(
 		"training_data.txt",
 		"word2vec_output.bin",
@@ -149,6 +150,7 @@ func TestNewWord2VecOptionsMany(t *testing.T) {
 		UseInputVocabFile,
 		WriteOutVocabFile,
 		SampleOverrideOption,
+		MaxVocabHashSize,
 		WindowSkipTen,
 	)
 
@@ -190,8 +192,11 @@ func TestNewWord2VecOptionsMany(t *testing.T) {
 	if m.Sample != float64(1e-5) {
 		t.Error("Sample option should be 'float64(1e-5', got", m.Sample)
 	}
+	if m.VocabHashSize != int(300) {
+		t.Error("MxVocabSize option should be 300, got", m.VocabHashSize)
+	}
 	if m.WindowSkipLen != int(10) {
-		t.Error("WindowSkipTen option should be 10, got", m.WindowSkipLen)
+		t.Error("WindowSkipLen option should be 10, got", m.WindowSkipLen)
 	}
 
 }
