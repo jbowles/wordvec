@@ -54,22 +54,21 @@ func TestGetWordHash(t *testing.T) {
 
 // expect the index to be -1 because it is not part of a vocabulary
 var readwordtests = []struct {
-	expectedWord  string
-	expectedIndex int
+	expectedWord string
 }{
-	{"line1word1", -1},
-	{"line1word2", -1},
-	{"line1word3", -1},
-	{"</s>", -1},
-	{"line2word1", -1},
-	{"</s>", -1},
-	{"</s>", -1},
-	{"line4word1", -1},
-	{"</s>", -1},
-	{"jdkfhdskfhdhsfjdsfdhsuafrioeujidjsiojiofhueihsbdkljfadsiofvujdhksifoewuiihdijfwb--line5truncateword1", -1},
-	{"</s>", -1},
-	{"line6word1", -1},
-	{"line6word2", -1},
+	{"line1word1"},
+	{"line1word2"},
+	{"line1word3"},
+	{"</s>"},
+	{"line2word1"},
+	{"</s>"},
+	{"</s>"},
+	{"line4word1"},
+	{"</s>"},
+	{"jdkfhdskfhdhsfjdsfdhsuafrioeujidjsiojiofhueihsbdkljfadsiofvujdhksifoewuiihdijfwb--line5truncateword1"},
+	{"</s>"},
+	{"line6word1"},
+	{"line6word2"},
 }
 
 func TestReadWord(t *testing.T) {

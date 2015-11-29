@@ -1,13 +1,15 @@
 package wordvec
 
 import (
-	"log"
+	"fmt"
 	"math"
+	"os"
 )
 
 // InitUnigramTable creates and seeds the 1-gram table
 func (v *VectorModel) InitUnigramTable() {
-	log.Println("Init UnigramTable")
+	//fmt.Fprintf(os.Stdout, "Init UnigramTable %v", time.Now())
+	fmt.Fprintf(os.Stdout, "Init UnigramTable\n")
 	var trainWordPow float64
 	var power float64 = 0.75
 	var d1 float64

@@ -1,6 +1,9 @@
 package wordvec
 
-import "log"
+import (
+	"fmt"
+	"os"
+)
 
 /*
 CreateBinaryTree creates a binary Huffman tree using word counts.
@@ -12,13 +15,15 @@ For Huffman trees: http://mathworld.wolfram.com/HuffmanCoding.html, http://www.f
 Frequent words will have short unique binary codes
 */
 func (v *VectorModel) CreateBinaryTree() {
-	log.Println("Create Binary Tree")
+	//fmt.Fprintf(os.Stdout, "Create Binary Tree %v", time.Now())
+	fmt.Fprintf(os.Stdout, "Create Binary Tree\n")
 	var min1i, min2i, pos1, pos2 int
 	var point []int = make([]int, MAX_CODE_LENGTH)
 	var code []byte = make([]byte, MAX_CODE_LENGTH)
 	var count []int64 = make([]int64, v.VocabSize*2+1)
 	var binaryt []int = make([]int, v.VocabSize*2+1)
 	var parentNode []int = make([]int, v.VocabSize*2+1)
+
 	for a := 0; a < v.VocabSize; a++ {
 		count[a] = int64(v.Vocab[a].Count)
 	}
@@ -28,7 +33,7 @@ func (v *VectorModel) CreateBinaryTree() {
 
 	pos1 = v.VocabSize - 1
 	pos2 = v.VocabSize
-	// Following algorithm constructs the Huffman tree by adding one node at a time
+	// Following algorithm constructs the Huffman tree encoding adding one node at a time
 	for c := 0; c < v.VocabSize-1; c++ {
 		// First, find the 2 smallest nodes: min1, min2
 		if pos1 >= 0 {

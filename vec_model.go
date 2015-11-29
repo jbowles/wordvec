@@ -58,11 +58,11 @@ const (
 )
 
 type VocabWord struct {
+	Code    []byte
+	Codelen byte
 	Count   int
 	Point   []int
 	Word    string
-	Code    []byte
-	Codelen byte
 }
 
 type VocabSlice []VocabWord
@@ -76,9 +76,12 @@ func (vs VocabSlice) Less(i, j int) bool {
 }
 
 func (vs VocabSlice) Swap(i, j int) {
-	tmp := vs[i]
-	vs[i] = vs[j]
-	vs[j] = tmp
+	vs[i], vs[j] = vs[j], vs[i]
+	/*
+		tmp := vs[i]
+		vs[i] = vs[j]
+		vs[j] = tmp
+	*/
 }
 
 /*
@@ -147,7 +150,7 @@ type VectorModel struct {
 
 // PrecomputeExpTable builds the computes an exponent table using EXP_TABLE_SIZE and MAX_EXP
 func PreComputeExpTable() (expTable []float64) {
-	//log.Println("Preconpute exponent table")
+	//fmt.Fprintf(os.Stdout, "Precompute exponent table")
 	expTable = make([]float64, int(EXP_TABLE_SIZE+1))
 
 	for i := 0; i < int(EXP_TABLE_SIZE); i++ {

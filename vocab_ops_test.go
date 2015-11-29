@@ -1,5 +1,74 @@
 package wordvec
 
+import "testing"
+
+var MxVocabSize ModelParams = VocabHashSizeOption(100)
+var MinCountZero ModelParams = MinCountOption(0)
+var testFileOneForLearnVocab string = "test_data/learn_vocab_training_one.txt"
+var testFileTwoForLearnVocab string = "test_data/learn_vocab_training_two.txt"
+var learnvocabtest = []struct {
+	targetWord                string
+	expectIndexForTestfileOne int
+	expectIndexForTestfileTwo int
+}{
+	{"aaaaa", -1, -1},
+	{"aardvark", -1, 2},
+	{"aardwolves", 8, -1},
+	{"aardwolf", 9, 3},
+	{"abaci", 10, -1},
+	{"abacus", 2, 4},
+}
+
+func TestLearnVocabFromTrainFileOne(t *testing.T) {
+	mv, _ := NewWord2VecModel(
+		testFileOneForLearnVocab,
+		"word2vec_output.txt",
+		MxVocabSize,
+		MinCountZero,
+	)
+	mv.LearnVocabFromTrainFile()
+	//fmt.Printf("%+v", mv.Vocab)
+
+	if mv.TrainWords != 113 {
+		t.Error("number of training words should be number of words in file (113), but got", mv.TrainWords)
+	}
+	if mv.VocabSize != 60 {
+		t.Error("vocabulary size should be number of unique tokens (60), but got", mv.VocabSize)
+	}
+
+	for _, w := range learnvocabtest {
+		wordPosition := mv.SearchVocab(w.targetWord)
+		if wordPosition != w.expectIndexForTestfileOne {
+			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileOne)
+		}
+	}
+}
+
+func TestLearnVocabFromTrainFileTwo(t *testing.T) {
+	mv, _ := NewWord2VecModel(
+		testFileTwoForLearnVocab,
+		"word2vec_output.txt",
+		MxVocabSize,
+		MinCountZero,
+	)
+	mv.LearnVocabFromTrainFile()
+	//fmt.Printf("%+v", mv.Vocab)
+
+	if mv.TrainWords != 28 {
+		t.Error("number of training words should be number of words in file (28), but got", mv.TrainWords)
+	}
+	if mv.VocabSize != 15 {
+		t.Error("vocabulary size should be number of unique tokens (15), but got", mv.VocabSize)
+	}
+
+	for _, w := range learnvocabtest {
+		wordPosition := mv.SearchVocab(w.targetWord)
+		if wordPosition != w.expectIndexForTestfileTwo {
+			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileTwo)
+		}
+	}
+}
+
 /*
   VOCABUALRY SUPPORT IS NOT PROVIDED YET SO NO NEED FOR THESE
 
