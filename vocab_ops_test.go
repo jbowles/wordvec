@@ -1,39 +1,58 @@
 package wordvec
 
-import "testing"
+import (
+	"flag"
+	"testing"
+)
 
-var MxVocabSize ModelParams = VocabHashSizeOption(100)
+var vocabrun int
+
+func init() {
+	flag.IntVar(&vocabrun, "vocabrun", 0, "pass 1 to run vocab tests: 'go test -vocabrun=1 -v -run VocabFromTrainFile' ")
+}
+
+var VocabSize100 ModelParams = VocabHashSizeOption(100)
+var VocabSize200 ModelParams = VocabHashSizeOption(200)
 var MinCountZero ModelParams = MinCountOption(0)
 var testFileOneForLearnVocab string = "test_data/learn_vocab_training_one.txt"
 var testFileTwoForLearnVocab string = "test_data/learn_vocab_training_two.txt"
+var testFileThreeForLearnVocab string = "test_data/learn_vocab_training_three.txt"
+
+//index counts are based on the vocabSort, which starts with the highest count token.
 var learnvocabtest = []struct {
-	targetWord                string
-	expectIndexForTestfileOne int
-	expectIndexForTestfileTwo int
+	targetWord                  string
+	expectIndexForTestfileOne   int
+	expectIndexForTestfileTwo   int
+	expectIndexForTestfileThree int
 }{
-	{"aaaaa", -1, -1},
-	{"aardvark", -1, 2},
-	{"aardwolves", 8, -1},
-	{"aardwolf", 9, 3},
-	{"abaci", 10, -1},
-	{"abacus", 2, 4},
+	{"abacushighcountfirstplace", 1, 1, 1},
+	{"abacus", 4, 2, 12},
+	{"aaaaa", -1, -1, -1},
+	{"aardvark", -1, 14, -1},
+	{"aardwolves", 10, -1, 8},
+	{"aardwolf", 2, 15, 9},
+	{"abaci", 3, -1, 10},
 }
 
 func TestLearnVocabFromTrainFileOne(t *testing.T) {
+	flag.Parse()
+	if vocabrun == 0 {
+		t.Skip("Skipping vocabulary tests by default")
+	}
 	mv, _ := NewWord2VecModel(
 		testFileOneForLearnVocab,
 		"word2vec_output.txt",
-		MxVocabSize,
+		VocabSize100,
 		MinCountZero,
 	)
 	mv.LearnVocabFromTrainFile()
 	//fmt.Printf("%+v", mv.Vocab)
 
-	if mv.TrainWords != 113 {
-		t.Error("number of training words should be number of words in file (113), but got", mv.TrainWords)
+	if mv.TrainWords != 165 {
+		t.Error("number of training words should be number of words in file (165), but got", mv.TrainWords)
 	}
-	if mv.VocabSize != 60 {
-		t.Error("vocabulary size should be number of unique tokens (60), but got", mv.VocabSize)
+	if mv.VocabSize != 61 {
+		t.Error("vocabulary size should be number of unique tokens (61), but got", mv.VocabSize)
 	}
 
 	for _, w := range learnvocabtest {
@@ -45,20 +64,24 @@ func TestLearnVocabFromTrainFileOne(t *testing.T) {
 }
 
 func TestLearnVocabFromTrainFileTwo(t *testing.T) {
+	flag.Parse()
+	if vocabrun == 0 {
+		t.Skip("Skipping vocabulary tests by default")
+	}
 	mv, _ := NewWord2VecModel(
 		testFileTwoForLearnVocab,
 		"word2vec_output.txt",
-		MxVocabSize,
+		VocabSize100,
 		MinCountZero,
 	)
 	mv.LearnVocabFromTrainFile()
 	//fmt.Printf("%+v", mv.Vocab)
 
-	if mv.TrainWords != 28 {
-		t.Error("number of training words should be number of words in file (28), but got", mv.TrainWords)
+	if mv.TrainWords != 132 {
+		t.Error("number of training words should be number of words in file (132), but got", mv.TrainWords)
 	}
-	if mv.VocabSize != 15 {
-		t.Error("vocabulary size should be number of unique tokens (15), but got", mv.VocabSize)
+	if mv.VocabSize != 16 {
+		t.Error("vocabulary size should be number of unique tokens (16), but got", mv.VocabSize)
 	}
 
 	for _, w := range learnvocabtest {
@@ -69,64 +92,38 @@ func TestLearnVocabFromTrainFileTwo(t *testing.T) {
 	}
 }
 
-/*
-  VOCABUALRY SUPPORT IS NOT PROVIDED YET SO NO NEED FOR THESE
-
-var emptyvocab int
-
-func init() {
-	flag.IntVar(&emptyvocab, "emptyvocab", 0, "pass 1 to run empty vocab search test")
-}
-
-var MxVocabSize ModelParams = VocabHashSizeOption(5)
-var wordhashvocab = []struct {
-	s    string
-	hash int
-}{
-	{"cars", 6920873},
-	{"bicycle", 15366747},
-	{"bicycles", 19254094},
-	{"dixon", 7326882},
-	{"mountain", 9830891},
-	{"considering", 20601749},
-	{"martüa", 7438740},
-	{"martua", 15767562},
-	{"", 0},
-	{" ", 32},
-	{"  ", 289},
-	{"8437289hfnkdj0owri3925yrheijfi9yr8932yhfbucndhfjioeqw", 3210550},
-}
-
-var emptyvocabtest = []struct {
-	s    string
-	hash int
-}{
-	{"this", 1},
-	{"that", -1},
-	{"those", -1},
-}
-
-// test if an empty vocab or missing word from a vocab will return -1 after it has exhausted search as large as the max vocabulary size. Need to skip this in normal testing as it will take a long time to search a large (about 21 million) pre-allocated vocabulary.
-// Example: go test -emptyvocab=1 -v -run SearchVocab
-func TestSearchEmptyVocab(t *testing.T) {
+// Use file three which is much larger than the MaxVocabSize defined in this test, this will force a reduceVocab(). The test file has `wc -l test_data/learn_vocab_training_three.txt` => 1160, with lots of duplicates. Reducing will only keep words around that ocurr more the MIN_REDUCE (default = 1)... so its throwing out all words with only 1 instance
+func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 	flag.Parse()
-	if emptyvocab == 0 {
-		t.Skip("Skip emptyvocab test; cli flag set: 'emptyvocab=1; note it will take long time'")
+	if vocabrun == 0 {
+		t.Skip("Skipping vocabulary tests by default")
 	}
+	//No longer need to keep MinCount to zero since this larger test file with many redundant tokens.
 	mv, _ := NewWord2VecModel(
-		"training_data.txt",
+		testFileThreeForLearnVocab,
 		"word2vec_output.txt",
-		//MxVocabSize,
+		VocabSize200,
 	)
+	mv.LearnVocabFromTrainFile()
+	//fmt.Printf("%+v", mv.Vocab)
 
-	log.Println("searching empty vocabulary, this will take a long time....")
-	for _, e := range emptyvocabtest {
-		res := mv.SearchVocab(e.s)
-		if res != int(e.hash) {
-			t.Errorf("SearchVocab(%s) = %d, want %d", e.s, res, e.hash)
+	if mv.TrainWords != 2641 {
+		t.Error("number of training words should be number of words in file (2641), but got", mv.TrainWords)
+	}
+	if mv.VocabSize != 115 {
+		t.Error("vocabulary size should be number of unique tokens (114), but got", mv.VocabSize)
+	}
+
+	for _, w := range learnvocabtest {
+		wordPosition := mv.SearchVocab(w.targetWord)
+		if wordPosition != w.expectIndexForTestfileThree {
+			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileThree)
 		}
 	}
 }
+
+/*
+TODO add this test
 
 func TestAddWordToVocab(t *testing.T) {
 	mv, _ := NewWord2VecModel(

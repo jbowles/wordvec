@@ -51,6 +51,7 @@ func (v *VectorModel) LearnVocabFromTrainFile() {
 		}
 		if float64(v.VocabSize) > (float64(v.VocabHashSize) * 0.7) {
 			v.reduceVocab()
+			break
 		}
 	}
 	v.sortVocab()
@@ -77,6 +78,7 @@ func (v *VectorModel) SearchVocab(word string) int {
 		}
 		hash = (hash + 1) % uint(v.VocabHashSize)
 	}
+	// will this ever be met??
 	return -1
 }
 

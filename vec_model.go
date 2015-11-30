@@ -138,12 +138,12 @@ type VectorModel struct {
 	Table           []int
 	Threshold       float64
 	TrainFile       string
-	TrainWords      int64
+	TrainWords      int64 //count of token types (non-unique words)
 	Vocab           VocabSlice
 	VocabHash       []int
 	VocabHashSize   int
 	VocabMaxSize    int
-	VocabSize       int
+	VocabSize       int //count of tokens (unique words)
 	WindowSkipLen   int
 	WordCountActual int64
 }
