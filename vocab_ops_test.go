@@ -14,6 +14,8 @@ func init() {
 var VocabSize100 ModelParams = VocabHashSizeOption(100)
 var VocabSize200 ModelParams = VocabHashSizeOption(200)
 var MinCountZero ModelParams = MinCountOption(0)
+var VocabWriter ModelParams = VocabOutFileOption("test_data/vocab_write_sample.txt")
+
 var testFileOneForLearnVocab string = "test_data/learn_vocab_training_one.txt"
 var testFileTwoForLearnVocab string = "test_data/learn_vocab_training_two.txt"
 var testFileThreeForLearnVocab string = "test_data/learn_vocab_training_three.txt"
@@ -103,6 +105,7 @@ func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 		testFileThreeForLearnVocab,
 		"word2vec_output.txt",
 		VocabSize200,
+		VocabWriter,
 	)
 	mv.LearnVocabFromTrainFile()
 	//fmt.Printf("%+v", mv.Vocab)
@@ -120,10 +123,15 @@ func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileThree)
 		}
 	}
+	mv.SaveVocab()
 }
 
 /*
 TODO add this test
+
+ SaveVocab()
+
+ and this one too:
 
 func TestAddWordToVocab(t *testing.T) {
 	mv, _ := NewWord2VecModel(

@@ -11,7 +11,6 @@ import (
 
 /*
 TODO these functions are related to using vocabulary files.
-func SaveVocab()               {}
 func ReadVocab()               {}
 */
 
@@ -80,6 +79,17 @@ func (v *VectorModel) SearchVocab(word string) int {
 	}
 	// will this ever be met??
 	return -1
+}
+
+func (v *VectorModel) SaveVocab() {
+	fmt.Fprintf(os.Stdout, "Save vocab to file: %s\n", v.VocabOutFile)
+	f, _ := os.Create(v.VocabOutFile)
+	defer f.Close()
+	writer := bufio.NewWriter(f)
+	for i := 0; i < v.VocabSize; i++ {
+		fmt.Fprintf(writer, "%s %d\n", v.Vocab[i].Word, v.Vocab[i].Count)
+	}
+	writer.Flush()
 }
 
 // ResetVocabHashIndices resets all indices of the vocab hash to -1. This is done for querying later on so we can distinguish indexes with zero, that have not been touched since initializatio, from indexes that have been modified. See also RecomputeVocabHash, LearnVocabFromTrainFile().

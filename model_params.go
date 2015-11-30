@@ -45,14 +45,6 @@ func DebugModeOption(debugModeOption int) func(v *VectorModel) error {
 	}
 }
 
-// InVocabFileOption The vocabulary will be read from <file>, not constructed from the training data. if "" then program will generate vocab. Default is "".
-func InVocabFileOption(inVocabFileOption string) func(v *VectorModel) error {
-	return func(v *VectorModel) error {
-		v.InVocabFile = inVocabFileOption
-		return nil
-	}
-}
-
 // IterOption The vocabulary will be read from <file>, not constructed from the training data. if "" then program will generate vocab. Default is "".
 func IterOption(iterOption int) func(v *VectorModel) error {
 	return func(v *VectorModel) error {
@@ -93,14 +85,6 @@ func NegSamplingOption(negSamplingOption int) func(v *VectorModel) error {
 	}
 }
 
-// OutVocabFile The vocabulary will be saved to <file>; if no file name given, i.e. "", then it won't be saved.
-func OutVocabFileOption(outVocabFileOption string) func(v *VectorModel) error {
-	return func(v *VectorModel) error {
-		v.OutVocabFile = outVocabFileOption
-		return nil
-	}
-}
-
 // Sample Sets threshold for occurrence of words. Those that appear with higher frequency in the training data will be randomly down-sampled; default is 1e-3, useful range is (0, 1e-5).
 func SampleOption(sampleOption float64) func(v *VectorModel) error {
 	return func(v *VectorModel) error {
@@ -120,6 +104,22 @@ func VocabHashSizeOption(vocabHashSizeOption int) func(v *VectorModel) error {
 	return func(v *VectorModel) error {
 		v.VocabHashSize = vocabHashSizeOption
 		v.VocabHash = make([]int, vocabHashSizeOption)
+		return nil
+	}
+}
+
+// InVocabFileOption The vocabulary will be read from <file>, not constructed from the training data. if "" then program will generate vocab. Default is "".
+func VocabInFileOption(vocabInFileOption string) func(v *VectorModel) error {
+	return func(v *VectorModel) error {
+		v.VocabInFile = vocabInFileOption
+		return nil
+	}
+}
+
+// OutVocabFile The vocabulary will be saved to <file>; if no file name given, i.e. "", then it won't be saved.
+func VocabOutFileOption(vocabOutFileOption string) func(v *VectorModel) error {
+	return func(v *VectorModel) error {
+		v.VocabOutFile = vocabOutFileOption
 		return nil
 	}
 }

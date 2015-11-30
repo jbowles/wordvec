@@ -114,7 +114,6 @@ type VectorModel struct {
 	DebugMode       int
 	ExpTable        []float64
 	FileSize        int64
-	InVocabFile     string
 	Iter            int
 	KmeansClasses   int
 	Layer1VecSize   int
@@ -126,7 +125,6 @@ type VectorModel struct {
 	NegSampling     int
 	NextRandom      uint64
 	NumThreads      int
-	OutVocabFile    string
 	OutputFile      string
 	Sample          float64
 	SoftMax         bool
@@ -142,7 +140,9 @@ type VectorModel struct {
 	Vocab           VocabSlice
 	VocabHash       []int
 	VocabHashSize   int
+	VocabInFile     string
 	VocabMaxSize    int
+	VocabOutFile    string
 	VocabSize       int //count of tokens (unique words)
 	WindowSkipLen   int
 	WordCountActual int64
@@ -213,7 +213,7 @@ func NewWord2VecModel(trainFile, outFile string, modelParams ...ModelParams) (*V
 		DebugMode:       DEBUG_MODE,
 		ExpTable:        PreComputeExpTable(),
 		FileSize:        0,
-		InVocabFile:     IN_VOCAB_FILE,
+		VocabInFile:     IN_VOCAB_FILE,
 		Iter:            ITER,
 		KmeansClasses:   KMEANS_CLASSES,
 		Layer1VecSize:   LAYER1_VEC_SIZE,
@@ -225,7 +225,7 @@ func NewWord2VecModel(trainFile, outFile string, modelParams ...ModelParams) (*V
 		NegSampling:     NEG_SAMPLING,
 		NextRandom:      NEXT_RANDOM,
 		NumThreads:      NUM_THREADS,
-		OutVocabFile:    IN_VOCAB_FILE,
+		VocabOutFile:    IN_VOCAB_FILE,
 		OutputFile:      outFile,
 		Sample:          SAMPLE,
 		SoftMax:         SOFTMAX,

@@ -13,8 +13,8 @@ var BIter20 ModelParams = IterOption(20)
 var BLayer1VecSize200 ModelParams = Layer1VecSizeOption(200)
 var BMinCount200 ModelParams = MinCountOption(200)
 var BNegSample50 ModelParams = NegSamplingOption(50)
-var BUseInputVocabFile ModelParams = InVocabFileOption("input_vocab_file.dat")
-var BWriteOutVocabFile ModelParams = OutVocabFileOption("word2vec_output_vocab_file.dat")
+var BUseInputVocabFile ModelParams = VocabInFileOption("input_vocab_file.dat")
+var BWriteOutVocabFile ModelParams = VocabOutFileOption("word2vec_output_vocab_file.dat")
 var BSampleOverrideOption ModelParams = SampleOption(1e-5)
 var BWindowSkipTen ModelParams = WindowSkipLenOption(10)
 
@@ -131,8 +131,8 @@ func TestNewWord2VecOptionsMany(t *testing.T) {
 	var Layer1VecSize200 ModelParams = Layer1VecSizeOption(200)
 	var MinCount200 ModelParams = MinCountOption(200)
 	var NegSample50 ModelParams = NegSamplingOption(50)
-	var UseInputVocabFile ModelParams = InVocabFileOption("input_vocab_file.dat")
-	var WriteOutVocabFile ModelParams = OutVocabFileOption("word2vec_output_vocab_file.dat")
+	var UseInputVocabFile ModelParams = VocabInFileOption("input_vocab_file.dat")
+	var WriteOutVocabFile ModelParams = VocabOutFileOption("word2vec_output_vocab_file.dat")
 	var SampleOverrideOption ModelParams = SampleOption(1e-5)
 	var WindowSkipTen ModelParams = WindowSkipLenOption(10)
 	var MaxVocabHashSize ModelParams = VocabHashSizeOption(300)
@@ -183,11 +183,11 @@ func TestNewWord2VecOptionsMany(t *testing.T) {
 	if m.NegSampling != int(50) {
 		t.Error("NegSampling option should be 50, got", m.NegSampling)
 	}
-	if m.InVocabFile != "input_vocab_file.dat" {
-		t.Error("InVocabFile option should be 'input_vocab_file.dat', got", m.InVocabFile)
+	if m.VocabInFile != "input_vocab_file.dat" {
+		t.Error("InVocabFile option should be 'input_vocab_file.dat', got", m.VocabInFile)
 	}
-	if m.OutVocabFile != "word2vec_output_vocab_file.dat" {
-		t.Error("InVocabFile option should be 'word2vec_output_vocab_file.dat', got", m.OutVocabFile)
+	if m.VocabOutFile != "word2vec_output_vocab_file.dat" {
+		t.Error("InVocabFile option should be 'word2vec_output_vocab_file.dat', got", m.VocabOutFile)
 	}
 	if m.Sample != float64(1e-5) {
 		t.Error("Sample option should be 'float64(1e-5', got", m.Sample)
