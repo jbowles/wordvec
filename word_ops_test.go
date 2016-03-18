@@ -8,7 +8,8 @@ import (
 	"testing"
 )
 
-var testFileForReadWord string = "test_data/read_word_test.txt"
+// TODO: if this file does not exist process will just hang forever.... need to handle the error case!
+var testFileForReadWord string = "testdata/read_word_test.txt"
 
 func BenchmarkReadWord(b *testing.B) {
 	var reader *bufio.Reader
@@ -78,12 +79,14 @@ func TestReadWord(t *testing.T) {
 		t.Error(ferr)
 	}
 	reader = bufio.NewReader(f)
+	//make sure to handle error EVEN IN THE TEST, OR PROCESS WILL JUST HANG!!
 	mv, _ := NewWord2VecModel(
 		"training_data.txt",
 		"word2vec_output.txt",
 	)
 	for _, w := range readwordtests {
 		wrd, _ := mv.ReadWord(reader)
+		//t.Log("got word: ", wrd)  //output word text for debugging
 		if wrd != w.expectedWord {
 			t.Errorf("ReadWord(reader) = %s, expected %s", wrd, w.expectedWord)
 		}

@@ -123,7 +123,7 @@ func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileThree)
 		}
 	}
-	//mv.SaveVocab()
+	mv.SaveVocab()
 }
 
 /*
