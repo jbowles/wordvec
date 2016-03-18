@@ -14,11 +14,11 @@ func init() {
 var VocabSize100 ModelParams = VocabHashSizeOption(100)
 var VocabSize200 ModelParams = VocabHashSizeOption(200)
 var MinCountZero ModelParams = MinCountOption(0)
-var VocabWriter ModelParams = VocabOutFileOption("test_data/vocab_write_sample.txt")
+var VocabWriter ModelParams = VocabOutFileOption("testdata/vocab_write_sample.txt")
 
-var testFileOneForLearnVocab string = "test_data/learn_vocab_training_one.txt"
-var testFileTwoForLearnVocab string = "test_data/learn_vocab_training_two.txt"
-var testFileThreeForLearnVocab string = "test_data/learn_vocab_training_three.txt"
+var testFileOneForLearnVocab string = "testdata/learn_vocab_training_one.txt"
+var testFileTwoForLearnVocab string = "testdata/learn_vocab_training_two.txt"
+var testFileThreeForLearnVocab string = "testdata/learn_vocab_training_three.txt"
 
 //index counts are based on the vocabSort, which starts with the highest count token.
 var learnvocabtest = []struct {
@@ -94,7 +94,7 @@ func TestLearnVocabFromTrainFileTwo(t *testing.T) {
 	}
 }
 
-// Use file three which is much larger than the MaxVocabSize defined in this test, this will force a reduceVocab(). The test file has `wc -l test_data/learn_vocab_training_three.txt` => 1160, with lots of duplicates. Reducing will only keep words around that ocurr more the MIN_REDUCE (default = 1)... so its throwing out all words with only 1 instance
+// Use file three which is much larger than the MaxVocabSize defined in this test, this will force a reduceVocab(). The test file has `wc -l testdata/learn_vocab_training_three.txt` => 1160, with lots of duplicates. Reducing will only keep words around that ocurr more the MIN_REDUCE (default = 1)... so its throwing out all words with only 1 instance
 func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 	flag.Parse()
 	if vocabrun == 0 {
@@ -123,7 +123,7 @@ func TestLearnVocabFromTrainFileReduce(t *testing.T) {
 			t.Errorf("SearchVocab() for target word %s returned %d, expected %d", w.targetWord, wordPosition, w.expectIndexForTestfileThree)
 		}
 	}
-	mv.SaveVocab()
+	//mv.SaveVocab()
 }
 
 /*

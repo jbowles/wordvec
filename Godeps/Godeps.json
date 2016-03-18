@@ -1,0 +1,6 @@
+{
+	"ImportPath": "github.com/jbowles/wordvec",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v58",
+	"Deps": []
+}

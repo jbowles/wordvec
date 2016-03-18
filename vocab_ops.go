@@ -90,6 +90,7 @@ func (v *VectorModel) SaveVocab() {
 		fmt.Fprintf(writer, "%s %d\n", v.Vocab[i].Word, v.Vocab[i].Count)
 	}
 	writer.Flush()
+	fmt.Fprintf(os.Stdout, "Finished saving vocab: %s\n", v.VocabOutFile)
 }
 
 // ResetVocabHashIndices resets all indices of the vocab hash to -1. This is done for querying later on so we can distinguish indexes with zero, that have not been touched since initializatio, from indexes that have been modified. See also RecomputeVocabHash, LearnVocabFromTrainFile().
